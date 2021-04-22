@@ -1,0 +1,81 @@
+pipeline {
+  agent {
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:19.03.5-dind
+    command:
+    - dockerd
+    - --host=unix:///var/run/docker.sock
+    - --host=tcp://0.0.0.0:2375
+    - --storage-driver=overlay2
+    tty: true
+    securityContext:
+      privileged: true
+  - name: git
+    image: alpine/git:1.0.7
+    command:
+    - cat
+    tty: true
+"""
+    }
+  }
+
+  stages {
+
+    // ***** Stage Clone *****
+    stage('Clone reviews source code') {
+      steps {
+        container('jnlp') {
+          script {
+            git branch: "master",
+                credentialsId: 'gun-deploy-key',
+                url: 'git@github.com:gun082544/bookinfo-reviews.git'
+          }
+        }
+      }
+    }
+
+    // ***** Stage Docker Tag *****
+    stage('Tag Docker Image') {
+      steps {
+        container('docker') {
+          script {
+            docker.withRegistry('https://ghcr.io', 'gun-ghcr') {
+              // Pulling UAT Image
+              uatImage = docker.image("ghcr.io/gun082544/bookinfo-reviews:uat")
+              uatImage.pull()
+              // Push UAT Image back with build tag
+              uatImage.push("build-${BUILD_NUMBER}")
+            }
+          }
+        }
+      }
+    }
+
+    // ***** Stage Git Tag *****
+    stage('Git tag') {
+      steps {
+        container('git') {
+          script {
+            // Use deploy key as private key to push code
+            sshagent(credentials: ['gun-deploy-key']) {
+              sh """
+                # Git tag first
+                git tag build-${BUILD_NUMBER}
+                # Push tag back to GitLab
+                SSH_AUTH_SOCK=${SSH_AUTH_SOCK} \
+                  GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
+                  git push --tags
+              """
+            }
+          }
+        }
+      }
+    }
+  }
+}

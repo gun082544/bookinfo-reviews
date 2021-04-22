@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Values.reviews.namespace }}
+spec:
+  type: {{ .Values.ingress.serviceType }}
+  ports:
+  - port: {{ .Values.reviews.port }}
+  selector:
+    app: {{ .Release.Name }}

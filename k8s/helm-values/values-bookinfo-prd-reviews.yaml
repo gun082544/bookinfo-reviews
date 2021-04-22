@@ -1,0 +1,15 @@
+reviews:
+  namespace: gun-bookinfo-prd
+  image: ghcr.io/gun082544/bookinfo-reviews
+  tag: prd
+  replicas: 1
+  imagePullSecrets: registry-bookinfo
+  port: 8081
+  healthCheckPath: "/health"
+ingress:
+  host: bookinfo.hellodolphin.in.th
+  path: "/gun/reviews(/|$)(.*)"
+  serviceType: ClusterIP
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
