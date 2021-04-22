@@ -35,7 +35,7 @@ spec:
     - cat
     tty: true
   - name: java-node
-    image: timbru31/java-node:11-alpine-jre-14
+    image: gradle:jdk11
     command:
     - cat
     tty: true   
@@ -111,8 +111,8 @@ spec:
                         -D sonar.projectKey=${PROJECT_KEY} \
                         -D sonar.projectName=${PROJECT_NAME} \
                         -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
-                        -D sonar.sources=./src
-                        -D sonar.java.binaries=.build/main/application/
+                        -D sonar.sources=./src \
+                        -D sonar.java.binaries=./bin
                         '''
                     }//End withSonarQubeEnv
 
@@ -134,7 +134,7 @@ spec:
             container('java-node') {
                 script {
                     // Install application dependency
-                    sh '''cd src/ && npm install --package-lock && cd ../'''
+                    sh '''gradle build'''
 
                     // Start OWASP Dependency Check
                     dependencyCheck(
