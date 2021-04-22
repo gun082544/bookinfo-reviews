@@ -137,7 +137,10 @@ spec:
                 script {
 
                     // Start OWASP Dependency Check
-                    sh '''gradle dependencyCheckAnalyze'''
+                    dependencyCheck(
+                        additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml",
+                        odcInstallation: "dependency-check"
+                    )
 
                     // Publish report to Jenkins
                     dependencyCheckPublisher(

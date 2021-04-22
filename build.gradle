@@ -1,15 +1,4 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.owasp:dependency-check-gradle:6.0.0'
-    }
-}
- 
-
 apply plugin: 'war'
-apply plugin: 'org.owasp.dependencycheck'
 
 sourceCompatibility = 1.8
 
@@ -27,24 +16,4 @@ dependencies {
     providedCompile 'javax.enterprise.concurrent:javax.enterprise.concurrent-api:1.0'
     providedCompile 'javax.enterprise:cdi-api:1.2'
     providedCompile 'io.swagger:swagger-annotations:1.5.0'
-}
-
-dependencyCheck {
-
-    // let's ignore errors to make builds in Jenkins more stable
-    failOnError = false
-
-    // OWASP Dependency Check plugin for Jenkins needs an XML report,
-    // but humans may also need an HTML one
-    format = 'ALL'
-
-    // set up a quality gate for vulnerabilities with high severity level:
-    //   let's consider that a vulnerability has a high severity level if its CVSS score is higher than 7
-    //   the build is going to fail if vulnerabilities with high severity level found
-    failBuildOnCVSS = 7
-
-    // specify a list of known issues which contain:
-    //   false-positives
-    //   confirmed vulnerabilities which are not fixed yet, but we have a ticket for that
-    suppressionFile = 'dependency-check-known-issues.xml'
 }
