@@ -4,7 +4,7 @@ reviews:
   tag: dev
   replicas: 1
   imagePullSecrets: registry-bookinfo
-  port: 8081
+  port: 9080
   healthCheckPath: "/health"
 ingress:
   host: bookinfo.dev.hellodolphin.in.th
