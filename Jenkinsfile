@@ -83,7 +83,7 @@ spec:
                     // Generate k8s-manifest-deploy.yaml for scanning
                     sh "helm template -f k8s/helm-values/values-bookinfo-${ENV_NAME}-reviews.yaml \
                         --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} \
-                        --namespace gun-bookinfo-${ENV_NAME} gin-reviews-${ENV_NAME} k8s/helm \
+                        --namespace gun-bookinfo-${ENV_NAME} gun-reviews-${ENV_NAME} k8s/helm \
                         > k8s-manifest-deploy.yaml"
                 }
             }
