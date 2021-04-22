@@ -14,7 +14,7 @@ ingress:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 extraEnv:
-  RATINGS_SERVICE: http://ratings:8081
+  RATINGS_SERVICE: http://gun-ratings-prd:8081
   ENABLE_RATINGS: true
   SERVICE_VERSION: v1
   STAR_COLOR: red
