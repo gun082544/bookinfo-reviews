@@ -35,7 +35,7 @@ spec:
     - cat
     tty: true
   - name: java-node
-    image: timbru31/java-node:11-alpine-jre-14
+    image: gradle:jdk11
     command:
     - cat
     tty: true   
@@ -104,6 +104,8 @@ spec:
         steps {
             container('java-node'){
                 script {
+                    sh '''gradle build'''
+                    sh '''ls -la '''
                     // Authentiocation with https://sonarqube.hellodolphin.in.th
                     withSonarQubeEnv('sonarqube-scanner') {
                         // Run Sonar Scanner
@@ -111,7 +113,8 @@ spec:
                         -D sonar.projectKey=${PROJECT_KEY} \
                         -D sonar.projectName=${PROJECT_NAME} \
                         -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
-                        -D sonar.sources=./src
+                        -D sonar.sources=./src \
+                        -D sonar.java.binaries=./build/classes
                         '''
                     }//End withSonarQubeEnv
 
@@ -132,8 +135,6 @@ spec:
         steps {
             container('java-node') {
                 script {
-                    // Install application dependency
-                    sh '''cd src/ && npm install --package-lock && cd ../'''
 
                     // Start OWASP Dependency Check
                     dependencyCheck(
@@ -146,8 +147,6 @@ spec:
                         pattern: 'dependency-check-report.xml'
                     )
 
-                    // Remove applocation dependency
-                    sh'''rm -rf src/node_modules src/package-lock.json'''
                 } // End script
             } // End container
         } // End steps
