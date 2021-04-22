@@ -112,6 +112,7 @@ spec:
                         -D sonar.projectName=${PROJECT_NAME} \
                         -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
                         -D sonar.sources=./src
+                        -D sonar.java.binaries=.build/main/application/
                         '''
                     }//End withSonarQubeEnv
 
