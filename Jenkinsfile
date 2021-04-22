@@ -104,6 +104,8 @@ spec:
         steps {
             container('java-node'){
                 script {
+                    sh '''gradle build'''
+                    sh '''ls -la '''
                     // Authentiocation with https://sonarqube.hellodolphin.in.th
                     withSonarQubeEnv('sonarqube-scanner') {
                         // Run Sonar Scanner
@@ -112,7 +114,7 @@ spec:
                         -D sonar.projectName=${PROJECT_NAME} \
                         -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
                         -D sonar.sources=./src \
-                        -D sonar.java.binaries=./bin
+                        -D sonar.java.binaries=./build/classes
                         '''
                     }//End withSonarQubeEnv
 
@@ -134,21 +136,14 @@ spec:
             container('java-node') {
                 script {
 
-                    // // Start OWASP Dependency Check
-                    // sh '''gradle dependencyCheckAnalyze --info'''
+                    // Start OWASP Dependency Check
+                    sh '''gradle dependencyCheckAnalyze --info'''
 
-                    // // Publish report to Jenkins
-                    // dependencyCheckPublisher(
-                    //     pattern: 'dependency-check-report.xml'
-                    // )
-
-                   dependencyCheck(
-                        additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml",
-                        odcInstallation: "dependency-check"
+                    // Publish report to Jenkins
+                    dependencyCheckPublisher(
+                        pattern: 'dependency-check-report.xml'
                     )
 
-                    // Remove applocation dependency
-                    sh'''rm -rf src/node_modules src/package-lock.json'''
                 } // End script
             } // End container
         } // End steps
