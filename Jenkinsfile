@@ -133,14 +133,9 @@ spec:
         steps {
             container('java-node') {
                 script {
-                    // Install application dependency
-                    sh '''gradle build'''
 
                     // Start OWASP Dependency Check
-                    dependencyCheck(
-                        additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml",
-                        odcInstallation: "dependency-check"
-                    )
+                    sh '''gradle dependencyCheckAnalyze --info'''
 
                     // Publish report to Jenkins
                     dependencyCheckPublisher(
