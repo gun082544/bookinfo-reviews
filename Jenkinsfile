@@ -134,12 +134,17 @@ spec:
             container('java-node') {
                 script {
 
-                    // Start OWASP Dependency Check
-                    sh '''gradle dependencyCheckAnalyze --info'''
+                    // // Start OWASP Dependency Check
+                    // sh '''gradle dependencyCheckAnalyze --info'''
 
-                    // Publish report to Jenkins
-                    dependencyCheckPublisher(
-                        pattern: 'dependency-check-report.xml'
+                    // // Publish report to Jenkins
+                    // dependencyCheckPublisher(
+                    //     pattern: 'dependency-check-report.xml'
+                    // )
+
+                   dependencyCheck(
+                        additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml",
+                        odcInstallation: "dependency-check"
                     )
 
                     // Remove applocation dependency
