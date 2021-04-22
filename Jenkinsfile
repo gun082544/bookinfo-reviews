@@ -137,7 +137,7 @@ spec:
                 script {
 
                     // Start OWASP Dependency Check
-                    sh '''gradle dependencyCheckAnalyze --info'''
+                    sh '''gradle dependencyCheckAnalyze'''
 
                     // Publish report to Jenkins
                     dependencyCheckPublisher(
